@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout Generated Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.PAT_TOKEN }}
 
@@ -19,7 +19,7 @@ jobs:
         run: git clone https://github.com/nikalexan/go-protos.git /tmp/proto-source
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "1.24"
 
