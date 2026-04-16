@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.PAT_TOKEN }}
+          fetch-tags: true
 
       - name: Clone Proto Files Repository
         run: git clone https://github.com/nikalexan/go-protos.git /tmp/proto-source
@@ -47,10 +48,43 @@ jobs:
             payment/payment.proto \
             order/order.proto
 
-      - name: Commit and push generated files
+      - name: Commit generated files
+        id: commit
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
           git add -A
-          git diff --cached --quiet || git commit -m "chore: regenerate pb.go from protos"
+          if git diff --cached --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            git commit -m "chore: regenerate pb.go from protos"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bump version tag
+        id: tag
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          LATEST=$(git tag --sort=-v:refname | grep '^v' | head -n1)
+          if [ -z "$LATEST" ]; then
+            NEW_TAG="v1.0.0"
+          else
+            MAJOR=$(echo $LATEST | cut -d. -f1 | tr -d 'v')
+            MINOR=$(echo $LATEST | cut -d. -f2)
+            PATCH=$(echo $LATEST | cut -d. -f3)
+            NEW_TAG="v${MAJOR}.${MINOR}.$((PATCH + 1))"
+          fi
+          echo "tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          git tag "$NEW_TAG"
+
+      - name: Push commit and tag
+        if: steps.commit.outputs.changed == 'true'
+        run: |
           git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/nikalexan/go-proto-gen.git main
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/nikalexan/go-proto-gen.git ${{ steps.tag.outputs.tag }}
+
+      - name: Index new version on proxy.golang.org
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          curl -sf "https://proxy.golang.org/github.com/nikalexan/go-proto-gen/@v/${{ steps.tag.outputs.tag }}.info" || true
+          curl -sf "https://sum.golang.org/lookup/github.com/nikalexan/go-proto-gen@${{ steps.tag.outputs.tag }}" || true
