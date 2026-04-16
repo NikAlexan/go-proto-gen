@@ -229,6 +229,42 @@ func (x *PaymentStats) GetTotalAmount() int64 {
 	return 0
 }
 
+type Test struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Test) Reset() {
+	*x = Test{}
+	mi := &file_payment_payment_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Test) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Test) ProtoMessage() {}
+
+func (x *Test) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_payment_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Test.ProtoReflect.Descriptor instead.
+func (*Test) Descriptor() ([]byte, []int) {
+	return file_payment_payment_proto_rawDescGZIP(), []int{4}
+}
+
 var File_payment_payment_proto protoreflect.FileDescriptor
 
 const file_payment_payment_proto_rawDesc = "" +
@@ -246,7 +282,8 @@ const file_payment_payment_proto_rawDesc = "" +
 	"totalCount\x12)\n" +
 	"\x10authorized_count\x18\x02 \x01(\x03R\x0fauthorizedCount\x12%\n" +
 	"\x0edeclined_count\x18\x03 \x01(\x03R\rdeclinedCount\x12!\n" +
-	"\ftotal_amount\x18\x04 \x01(\x03R\vtotalAmount2\xa0\x01\n" +
+	"\ftotal_amount\x18\x04 \x01(\x03R\vtotalAmount\"\x06\n" +
+	"\x04Test2\xa0\x01\n" +
 	"\x0ePaymentService\x12C\n" +
 	"\x0eProcessPayment\x12\x17.payment.PaymentRequest\x1a\x18.payment.PaymentResponse\x12I\n" +
 	"\x0fGetPaymentStats\x12\x1f.payment.GetPaymentStatsRequest\x1a\x15.payment.PaymentStatsB+Z)github.com/nikalexan/go-proto-gen/paymentb\x06proto3"
@@ -263,12 +300,13 @@ func file_payment_payment_proto_rawDescGZIP() []byte {
 	return file_payment_payment_proto_rawDescData
 }
 
-var file_payment_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_payment_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_payment_payment_proto_goTypes = []any{
 	(*PaymentRequest)(nil),         // 0: payment.PaymentRequest
 	(*PaymentResponse)(nil),        // 1: payment.PaymentResponse
 	(*GetPaymentStatsRequest)(nil), // 2: payment.GetPaymentStatsRequest
 	(*PaymentStats)(nil),           // 3: payment.PaymentStats
+	(*Test)(nil),                   // 4: payment.Test
 }
 var file_payment_payment_proto_depIdxs = []int32{
 	0, // 0: payment.PaymentService.ProcessPayment:input_type -> payment.PaymentRequest
@@ -293,7 +331,7 @@ func file_payment_payment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payment_payment_proto_rawDesc), len(file_payment_payment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
