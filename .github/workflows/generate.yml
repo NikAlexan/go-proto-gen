@@ -65,11 +65,11 @@ jobs:
         id: tag
         if: steps.commit.outputs.changed == 'true'
         run: |
-          LATEST=$(git tag --sort=-v:refname | grep '^v' | head -n1)
+          LATEST=$(git ls-remote --tags origin | grep -oP 'refs/tags/v\K[0-9]+\.[0-9]+\.[0-9]+' | sort -V | tail -n1)
           if [ -z "$LATEST" ]; then
             NEW_TAG="v1.0.0"
           else
-            MAJOR=$(echo $LATEST | cut -d. -f1 | tr -d 'v')
+            MAJOR=$(echo $LATEST | cut -d. -f1)
             MINOR=$(echo $LATEST | cut -d. -f2)
             PATCH=$(echo $LATEST | cut -d. -f3)
             NEW_TAG="v${MAJOR}.${MINOR}.$((PATCH + 1))"
